@@ -1,12 +1,62 @@
-#include <iostream>
-#include <algorithm>
-#include <map>
-#include <set>
-#include <vector>
-#include <queue>
-#include <stack>
-#define i64 long long
+#include <bits/stdc++.h>
+using i64 = long long;
 using namespace std;
+
+// fact, inv_fact, pow_mod, C(n, k)
+// 阶乘，阶乘逆元，快速幂，组合数
+struct FACT_struct {
+const int N = 100009;
+const int mod = 998244353;
+// i64 fact[N], inv_fact[N];
+vector<i64> fact, inv_fact;
+FACT_struct() {
+    fact.resize(N);
+    inv_fact.resize(N);
+}
+i64 pow_mod(i64 a, i64 x, i64 m) {
+    i64 ret = 1;
+    while (x) {
+        if (x & 1) {
+            ret = ret * a % m;
+        }
+        a = a * a % m;
+        x >>= 1;
+    }
+    return ret;
+}
+i64 C(int n, int k, int m) {
+    if (k > n || k < 0) {
+        return 0;
+    }
+    else {
+        return (fact[n] * inv_fact[k] % mod) * inv_fact[n - k] % mod;
+    }
+}
+void init_fact_inv(int n) {
+    fact[0] = 1;
+    for (int i = 1; i <= n; i++) {
+        fact[i] = fact[i - 1] * i % mod;
+    }
+    inv_fact[n] = pow_mod(fact[n], mod - 2, mod);
+    for (int i = n - 1; i >= 0; i--) {
+        inv_fact[i] = inv_fact[i + 1] * (i + 1) % mod;
+    }
+}
+};
+void test_fact_inv_C_n_m() {
+    cout << "-------------------- test_fact_inv_C_n_m --------------------\n";
+    FACT_struct T;
+    T.init_fact_inv(T.N - 1);
+    for (int i = 0; i <= 10; i++) {
+        cout << i << "! = " << T.fact[i] << '\n';
+    }
+    auto C = [&](int x, int y) -> void {
+        cout << "C(" << x << ", " << y << ") = " << T.C(x, y, T.mod) << '\n';
+    };
+    for (int i = 0, n = 7; i <= n; i++) {
+        C(n, i);
+    }
+}
 
 // LCA
 template<typename T>
@@ -93,6 +143,7 @@ struct CartesianTree {
     }
 };
 void testCartesianTree() {
+    cout << "--------------------- testCartesianTree ---------------------\n";
     int n = 4;
     CartesianTree<i64> ct(n);
     vector<int> in(n + 1);
@@ -151,6 +202,7 @@ struct Fenwick {
     }
 };
 void testFenwick() {
+    cout << "------------------------ testFenwick ------------------------\n";
     int n = 5;
     vector<int> a(n + 1);
     Fenwick<i64> f(n);
@@ -191,8 +243,9 @@ void testFenwick() {
 }
 
 void test01() {
-    // testCartesianTree();
+    testCartesianTree();
     testFenwick();
+    test_fact_inv_C_n_m();
 }
 int main() {
     cout << "--------------------------- START ---------------------------\n";
