@@ -3,6 +3,39 @@ using i64 = long long;
 const i64 LLinf = 0x3333ffff3333ffff;
 using namespace std;
 
+// Bellman_Ford 判断负环，0是超级源点，其他点位 1-n
+struct BellmanFord {
+struct node {
+    int p;
+    i64 d;
+};
+bool Bellman_Ford(int n, int st, vector<vector<node>>& G) {
+    vector<i64> dis(n + 1, LLinf);
+    dis[st] = 0; 
+    bool flag;
+    for (int cnt = 1; cnt <= n; cnt++) {
+        flag = false;
+        // 
+        for (int i = 0; i <= n; i++) {
+            if (dis[i] == LLinf) {
+                continue;
+            }
+            for (auto [ch, d] : G[i]) {
+                if (dis[i] + d < dis[ch]) {
+                    dis[ch] = dis[i] + d;
+                    flag = true;
+                }
+            }
+        }
+        if (!flag) {
+            break;
+        }
+    }
+    return flag;
+}
+
+};
+
 // 最短路O(mlogm), 1-n 索引
 // m是边的数量
 struct Dijkstra {
