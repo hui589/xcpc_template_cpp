@@ -9,6 +9,9 @@ struct Dijkstra {
 struct node {
     int p;
     i64 d;
+    bool operator < (const node& n1) const {
+        return d > n1.d;
+    }
 };
 
 vector<i64> dijkstra(vector<vector<node>>& G, int st) {
