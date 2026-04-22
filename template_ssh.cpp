@@ -3,12 +3,53 @@ using i64 = long long;
 const i64 LLinf = 0x3333ffff3333ffff;
 using namespace std;
 
+// Bellman_Ford的queue优化 spfa 判断负环，0是超级源点，其他点位 1-n
+struct SPFA {
+struct node {
+    int p;
+    i64 d;
+};
+// n 不包括超级源点
+bool spfa(int n, int st, vector<vector<node>>& G) {
+    vector<int> cnt(n + 1, 0);
+    vector<i64> dis(n + 1, LLinf);
+    vector<bool> vis(n + 1, false);
+    queue<int> q;
+    q.push(st);
+    dis[st] = 0;
+    cnt[st] = -1; // 超级源点为 -1, 普通点为 0
+    // 上面限制了cnt[x]的最大值
+    // 其实源点多小都没问题 -10， -100，只需要保证下面return true的部分一定是正确的就行
+    vis[st] = true;
+    while (!q.empty()) {
+        int tp = q.front();
+        q.pop();
+        vis[tp] = false;
+        for (auto [v, w] : G[tp]) {
+            if (dis[v] > dis[tp] + w) {
+                dis[v] = dis[tp] + w;
+                cnt[v] = cnt[tp] + 1;
+                if (cnt[v] >= n) {
+                    return true;
+                }
+                if (!vis[v]) {
+                    q.push(v);
+                    vis[v] = true;
+                }
+            }
+        }
+    }
+    return false;
+}
+};
+
 // Bellman_Ford 判断负环，0是超级源点，其他点位 1-n
 struct BellmanFord {
 struct node {
     int p;
     i64 d;
 };
+// n 不包括超级源点
 bool Bellman_Ford(int n, int st, vector<vector<node>>& G) {
     vector<i64> dis(n + 1, LLinf);
     dis[st] = 0; 
