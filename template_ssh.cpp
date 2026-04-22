@@ -22,8 +22,7 @@ vector<i64> dijkstra(vector<vector<node>>& G, int st) {
     priority_queue<node> pq;
     pq.push({st, 0});
     while (!pq.empty()) {
-        int tp = pq.top().p;
-        i64 d = pq.top().d;
+        auto [tp, d] = pq.top();
         pq.pop();
         if (vis[tp]) {
             continue;
@@ -31,9 +30,7 @@ vector<i64> dijkstra(vector<vector<node>>& G, int st) {
         else {
             vis[tp] = true;
         }
-        for (auto n1 : G[tp]) {
-            int ch = n1.p;
-            i64 len = n1.d;
+        for (auto [ch, len] : G[tp]) {
             if (len + d < dis[ch]) {
                 dis[ch] = len + d;
                 pq.push({ch, dis[ch]});
