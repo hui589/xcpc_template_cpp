@@ -12,9 +12,9 @@ struct node {
 };
 
 vector<i64> dijkstra(vector<vector<node>>& G, int st) {
-    int n = G.size() - 1;
-    vector<i64> dis(n + 1, LLinf);
-    vector<bool> vis(n + 1, false);
+    int n = G.size();
+    vector<i64> dis(n, LLinf);
+    vector<bool> vis(n, false);
     dis[st] = 0;
     priority_queue<node> pq;
     pq.push({st, 0});
