@@ -1,6 +1,46 @@
 #include <bits/stdc++.h>
 using i64 = long long;
+const i64 LLinf = 0x3333ffff3333ffff;
 using namespace std;
+
+// 最短路O(mlogm), 1-n 索引
+// m是边的数量
+struct Dijkstra {
+struct node {
+    int p;
+    i64 d;
+};
+
+vector<i64> dijkstra(vector<vector<node>>& G, int st) {
+    int n = G.size() - 1;
+    vector<i64> dis(n + 1, LLinf);
+    vector<bool> vis(n + 1, false);
+    dis[st] = 0;
+    priority_queue<node> pq;
+    pq.push({st, 0});
+    while (!pq.empty()) {
+        int tp = pq.top().p;
+        i64 d = pq.top().d;
+        pq.pop();
+        if (vis[tp]) {
+            continue;
+        }
+        else {
+            vis[tp] = true;
+        }
+        for (auto n1 : G[tp]) {
+            int ch = n1.p;
+            i64 len = n1.d;
+            if (len + d < dis[ch]) {
+                dis[ch] = len + d;
+                pq.push({ch, dis[ch]});
+            }
+        }
+    }
+    return dis;
+}
+};
+
 
 // fact, inv_fact, pow_mod, C(n, k)
 // 阶乘，阶乘逆元，快速幂，组合数
