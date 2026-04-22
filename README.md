@@ -24,3 +24,11 @@ xcpc模板,c++
 
 ### 4.阶乘，阶乘逆元，快速幂，组合数
 
+
+### 5.Dijkstra
+
+
+### 6.Bellman_Ford 判断负环，0是超级源点，其他点位 1-n
+
+
+### 7.Bellman_Ford的queue优化 spfa 
