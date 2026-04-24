@@ -3,6 +3,34 @@ using i64 = long long;
 const i64 LLinf = 0x3333ffff3333ffff;
 using namespace std;
 
+// SG_MEX
+// 不包含在集合 S 中的最小非负整数
+struct MEX {
+int mex(vector<int> v) {
+    if (v.empty()) {
+        return 0;
+    }
+    sort(v.begin(), v.end());
+    vector<int> tmp;
+    tmp.push_back(v[0]);
+    for (int i = 1; i < v.size(); i++) {
+        if (v[i] != v[i - 1]) {
+            tmp.push_back(v[i]);
+        }
+    }
+    int ret = 0;
+    for (int i = 0; i < tmp.size(); i++) {
+        if (ret == tmp[i]) {
+            ret++;
+        }
+        else {
+            break;
+        }
+    }
+    return ret;
+}
+};
+
 // Bellman_Ford的queue优化 spfa 判断负环，0是超级源点，其他点位 1-n
 struct SPFA {
 struct node {
