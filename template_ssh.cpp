@@ -3,6 +3,32 @@ using i64 = long long;
 const i64 LLinf = 0x3333ffff3333ffff;
 using namespace std;
 
+// 欧拉筛 O(n), 素数最大值 <= n
+struct Euler_Prime {
+vector<int> p;
+vector<bool> is_prime;
+
+void euler_prime(int n) {
+    p.clear();
+    is_prime.clear();
+    is_prime.resize(n + 1, true);
+    for (int i = 2; i <= n; i++) {
+        if (is_prime[i]) {
+            p.push_back(i);
+        }
+        for (auto pp : p) {
+            if (pp * i > n) {
+                break;
+            }
+            is_prime[pp * i] = false;
+            if (i % pp == 0) {
+                break;
+            }
+        }
+    }
+}
+};
+
 // SG_MEX
 // 不包含在集合 S 中的最小非负整数
 struct MEX {
