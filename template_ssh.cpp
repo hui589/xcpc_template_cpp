@@ -3,6 +3,45 @@ using i64 = long long;
 const i64 LLinf = 0x3333ffff3333ffff;
 using namespace std;
 
+// 并查集
+struct DSU {
+    int n;
+    vector<int> fa, sz;
+    DSU(int _n) {
+        n = _n;
+        fa.resize(n + 1);
+        sz.resize(n + 1);
+        for (int i = 1; i <= n; i++) {
+            fa[i] = i;
+            sz[i] = 1;
+        }
+    }
+    // int fa[N], sz[N];
+    int find(int x) {
+        if (x == fa[x]) {
+            return x;
+        }
+        else {
+            return fa[x] = find(fa[x]);
+        }
+    }
+    
+    void Union(int a, int b) {
+        a = find(a);
+        b = find(b);
+        if (a != b) {
+            if (sz[a] < sz[b]) {
+                fa[a] = b;
+                sz[b] += sz[a];
+            }
+            else {
+                fa[b] = a;
+                sz[a] += sz[b];
+            }
+        }
+    }
+};
+
 // 欧拉筛 O(n), 素数最大值 <= n
 struct Euler_Prime {
 vector<int> p;
