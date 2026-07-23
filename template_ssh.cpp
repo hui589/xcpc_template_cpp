@@ -3,6 +3,112 @@ using i64 = long long;
 const i64 LLinf = 0x3333ffff3333ffff;
 using namespace std;
 
+// 线段树
+// 简化参数成员函数为 1_base 起始下标
+// 可手动变为 0_base 起始下标
+template <typename T>
+struct SegmentTree {
+    #define lc (node << 1)
+    #define rc ((node << 1) | 1)
+    #define mid ((l + r) >> 1)
+    int n_;
+    vector<T> a;
+    // vector<T> MAX;
+    vector<T> SUM;
+    // vector<T> GCD;
+    vector<T> lazy;
+
+    SegmentTree() {}
+    SegmentTree(int __n__) {
+        n_ = __n__;
+        a.resize(n_ + 1);
+        // MAX.resize(n_ * 4 + 1);
+        SUM.resize(n_ * 4 + 1);
+        // GCD.resize(n_ * 4 + 1);
+        lazy.resize(n_ * 4 + 1);
+    }
+
+    void build() { build(1, 1, n_); }
+    void update(int idx, T val) { update(1, 1, n_, idx, val); }
+    void update_range(int ul, int ur, T val) { update_range(1, 1, n_, ul, ur, val); }
+    T query(int ql, int qr) { return query(1, 1, n_, ql, qr); }
+
+    void pushup(int node) {
+        // MAX[node] = max(MAX[lc], MAX[rc]);
+        SUM[node] = SUM[lc] + SUM[rc];
+        // GCD[node] = __gcd(GCD[lc], GCD[rc]);
+    }
+    void pushdown(int node, int l, int r) {
+        if (l == r) {
+            return;
+        }
+        if (lazy[node] != 0) {
+            SUM[lc] += lazy[node] * (mid - l + 1);
+            SUM[rc] += lazy[node] * (r - mid); // 不需要 -1
+            lazy[lc] += lazy[node];
+            lazy[rc] += lazy[node];
+            lazy[node] = 0;
+        }
+    }
+    void build(int node, int l, int r) {
+        if (l == r) {
+            // MAX[node] = a[l];
+            SUM[node] = a[l];
+            // GCD[node] = a[l];
+            return;
+        }
+        build(lc, l, mid);
+        build(rc, mid + 1, r);
+        pushup(node);
+    }
+    void update(int node, int l, int r, int idx, T val) {
+        if (r < idx || l > idx) {
+            return;
+        }
+        if (l == r && l == idx) {
+            // MAX[node] = val;
+            SUM[node] = val;
+            // GCD[node] = val;
+            return;
+        }
+        update(lc, l, mid, idx, val);
+        update(rc, mid + 1, r, idx, val);
+        pushup(node);
+    }
+    void update_range(int node, int l, int r, int ul, int ur, T val) {
+        if (ur < l || r < ul) {
+            return;
+        }
+        if (ul <= l && r <= ur) {
+            SUM[node] += val * (r - l + 1);
+            lazy[node] += val;
+            return;
+        }
+        pushdown(node, l, r);
+        update_range(lc, l, mid, ul, ur, val);
+        update_range(rc, mid + 1, r, ul, ur, val);
+        pushup(node);
+    }
+    T query(int node, int l, int r, int ql, int qr) {
+        if (qr < l || r < ql) {
+            return 0;
+        }
+        if (ql <= l && r <= qr) {
+            // return MAX[node];
+            return SUM[node];
+            // return GCD[node];
+        }
+        pushdown(node, l, r);
+        T L = query(lc, l, mid, ql, qr);
+        T R = query(rc, mid + 1, r, ql, qr);
+        // return max(L, R);
+        return L + R;
+        // return __gcd(L, R);
+    }
+};
+
+// nim
+
 // 并查集
 struct DSU {
     int n;
