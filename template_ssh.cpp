@@ -14,6 +14,7 @@ struct TOPOSort {
     }
     string TopoSort(vector<int>& in, vector<vector<int> >& G) {
         queue<int> q;
+        // 字典序最大最小，使用 priority_queue
         for (int i = 0; i < n; i++) {
             if (in[i] == 0) {
                 q.push(i);
