@@ -3,6 +3,51 @@ using i64 = long long;
 const i64 LLinf = 0x3333ffff3333ffff;
 using namespace std;
 
+// 拓扑排序
+// 唯一性，自环，排序序列
+// 来自 POJ 1094
+struct TOPOSort {
+    int n;
+    TOPOSort() {};
+    TOPOSort(int _n) {
+        n = _n;
+    }
+    string TopoSort(vector<int>& in, vector<vector<int> >& G) {
+        queue<int> q;
+        for (int i = 0; i < n; i++) {
+            if (in[i] == 0) {
+                q.push(i);
+            }
+        }
+        string ret; // 排序序列
+        bool hasor = false; // 唯一性
+        while (!q.empty()) {
+            if (q.size() >= 2) {
+                hasor = true; // 唯一性
+            }
+            int tp = q.front();
+            q.pop();
+            ret.push_back(tp + 'A'); // 排序序列
+            for (int ch : G[tp]) {
+                in[ch]--;
+                if (in[ch] == 0) {
+                    q.push(ch);
+                }
+            }
+        }
+        for (int i = 0; i < n; i++) {
+            if (in[i] > 0) {
+                return "circle"; // 自环
+            }
+        }
+        if (hasor) {
+            return "or"; // 唯一性
+        }
+        return ret; // 排序序列
+    }
+};
+
+
 // st表，稀疏表
 // 1_base 起始下标
 template <typename T>
