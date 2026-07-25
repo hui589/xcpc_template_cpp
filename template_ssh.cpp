@@ -42,6 +42,11 @@ struct SparseTable {
     }
 
     T query(int l, int r, int q) {
+        if (l > r) {
+            return 0; // MAX, GCD
+            // return ((~0 << 2) >> 2); // int MIN
+            // return ((~0LL << 2) >> 2); // long long MIN
+        }
         int lg = __lg(r - l + 1);
         if (q == qMAX) {
             return max(MAX[l][lg], MAX[r - (1 << lg) + 1][lg]);
