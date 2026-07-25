@@ -3,6 +3,84 @@ using i64 = long long;
 const i64 LLinf = 0x3333ffff3333ffff;
 using namespace std;
 
+// st表，稀疏表
+// 1_base 起始下标
+template <typename T>
+struct SparseTable {
+    int n;
+    vector<T> a;
+    vector<vector<T>> MAX;
+    vector<vector<T>> MIN;
+    // vector<vector<T>> GCD;
+#define qMAX 1
+#define qMIN 2
+// #define qGCD 3
+    SparseTable() {}
+    SparseTable(int _n) {
+        n = _n;
+        int lg = __lg(n);
+        a.resize(n + 1);
+        MAX.resize(n + 1, vector<T>(lg + 1));
+        MIN.resize(n + 1, vector<T>(lg + 1));
+        // GCD.resize(n + 1, vector<T>(lg + 1));
+    }
+
+    void build() {
+        int lg = __lg(n);
+        for (int i = 1; i <= n; i++) {
+            MAX[i][0] = a[i];
+            MIN[i][0] = a[i];
+            // GCD[i][0] = a[i];
+        }
+        for (int j = 1; j <= lg; j++) {
+            for (int i = 1; i <= (n - (1 << j) + 1); i++) {
+                MAX[i][j] = max(MAX[i][j - 1], MAX[i + (1 << (j - 1))][j - 1]);
+                MIN[i][j] = min(MIN[i][j - 1], MIN[i + (1 << (j - 1))][j - 1]);
+                // GCD[i][j] = __gcd(GCD[i][j - 1], GCD[i + (1 << (j - 1))][j - 1]);
+            }
+        }
+    }
+
+    T query(int l, int r, int q) {
+        int lg = __lg(r - l + 1);
+        if (q == qMAX) {
+            return max(MAX[l][lg], MAX[r - (1 << lg) + 1][lg]);
+        }
+        else if (q == qMIN) {
+            return min(MIN[l][lg], MIN[r - (1 << lg) + 1][lg]);
+        }
+        // else if (q == qGCD) {
+        //     return __gcd(GCD[l][lg], GCD[r - (1 << lg) + 1][lg]);
+        // }
+        return 0;
+    }
+};
+
+// 线性基
+template <typename T>
+struct Linear {
+    vector<T> b;
+    int sz;
+    Linear() { sz = 32; }
+    Linear(int _sz) {
+        sz = _sz;
+        b.resize(sz);
+    }
+
+    insert(T x) {
+        for (int i = sz - 1; i >= 0; i--) {
+            if (!(x >> i) & 1) {
+                continue;
+            }
+            if (!b[i]) {
+                b[i] = x;
+                break;
+            }
+            x ^= b[i];
+        }
+    }
+};
+
 // 线段树
 // 简化参数成员函数为 1_base 起始下标
 // 可手动变为 0_base 起始下标
