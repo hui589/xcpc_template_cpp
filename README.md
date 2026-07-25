@@ -73,3 +73,22 @@ r = x % p, x = k * p + r, r <= x / 2
 
 
 ### 16.拓扑排序
+
+
+### 17.最小生成树
+Kruskal算法，对边长排序，使用并查集合并，修改成下方的形式
+bool Union(int a, int b) {
+    a = find(a); b = find(b);
+    if (a == b) return false;
+    else {
+        if (sz[a] < sz[b]) {
+            fa[a] = b;
+            sz[b] += sz[a];
+        }
+        else {
+            fa[b] = a;
+            sz[a] += sz[b];
+        }
+        return true;
+    }
+}

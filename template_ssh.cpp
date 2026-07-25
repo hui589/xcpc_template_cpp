@@ -3,6 +3,8 @@ using i64 = long long;
 const i64 LLinf = 0x3333ffff3333ffff;
 using namespace std;
 
+// 最小生成树
+
 // 拓扑排序
 // 唯一性，自环，排序序列
 // 来自 POJ 1094
