@@ -3,6 +3,108 @@ using i64 = long long;
 const i64 LLinf = 0x3333ffff3333ffff;
 using namespace std;
 
+// SCC强连通分量 Tarjan 
+// 1 起始点
+struct Tarjan_SCC {
+    int n, dfn_cnt, scc_cnt;
+    vector<bool> in_stk;
+    stack<int> stk;
+    vector<int> dfn;
+    vector<int> low;
+    vector<int> scc_id;
+    vector<vector<int>> G;
+
+    vector<int> sum;
+
+    Tarjan_SCC(int n_) {
+        n = n_;
+        dfn_cnt = 0;
+        scc_cnt = 0;
+        in_stk.resize(n + 1, false);
+        dfn.resize(n + 1, -1);
+        low.resize(n + 1, -1);
+        scc_id.resize(n + 1, -1);
+        G.resize(n + 1, vector<int>());
+
+        sum.resize(n + 1, -1);
+    }
+
+    void targan(int u) {
+        dfn[u] = low[u] = ++dfn_cnt;
+        stk.push(u);
+        in_stk[u] = true;
+        for (int v : G[u]) {
+            if (dfn[v] == -1) {
+                targan(v);
+                low[u] = min(low[u], low[v]);
+            }
+            else if (in_stk[v]) {
+                low[u] = min(low[u], dfn[v]);
+                // low[u] = min(low[u], low[v]);
+            }
+        }
+        if (dfn[u] == low[u]) {
+            scc_cnt++;
+            int v;
+            sum[scc_cnt] = 0;
+            do {
+                v = stk.top();
+                stk.pop();
+                in_stk[v] = false;
+                scc_id[v] = scc_cnt;
+                sum[scc_cnt]++;
+            } while (v != u);
+        }
+    }
+
+    void all() {
+        for (int i = 1; i <= n; i++) {
+            if (scc_id[i] == -1) {
+                targan(i);
+            }
+        }
+    }
+
+    vector<vector<int>> get_deg() {
+        vector<vector<int>> ret(scc_cnt + 1);
+        for (int i = 1; i <= n; i++) {
+            for (int v : G[i]) {
+                if (scc_id[i] != scc_id[v]) {
+                    ret[scc_id[i]].push_back(scc_id[v]);
+                }
+            }
+        }
+        for (int i = 1; i <= scc_cnt; i++) quchong(ret[i]);
+        return ret;
+    }
+    
+    vector<vector<int>> get_scc() {
+        vector<vector<int>> ret(scc_cnt + 1);
+        for (int i = 1; i <= n; i++) {
+            ret[scc_id[i]].push_back(i);
+        }
+        return ret;
+    }
+
+    void quchong(vector<int>& v) {
+        if (v.empty()) {
+            return;
+        }
+        sort(v.begin(), v.end());
+        vector<int> t;
+        int ed = v[0];
+        t.push_back(ed);
+        int sz = v.size();
+        for (int i = 1; i < sz; i++) {
+            if (v[i] != ed) {
+                ed = v[i];
+                t.push_back(ed);
+            }
+        }
+        v.swap(t);
+    }
+};
+
 // 矩阵计算，矩阵快速幂
 // 草稿
 struct matrix {
