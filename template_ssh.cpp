@@ -52,22 +52,24 @@ struct matrix {
 
 // 拓扑排序
 // 唯一性，自环，排序序列
-// 来自 POJ 1094
+// string 版本来自 POJ 1094，并且修改返回值为string
 struct TOPOSort {
     int n;
     TOPOSort() {};
     TOPOSort(int _n) {
         n = _n;
     }
-    string TopoSort(vector<int>& in, vector<vector<int> >& G) {
+    int TopoSort(vector<int>& in, vector<vector<int> >& G, int n, vector<int>& ret_vector) {
         queue<int> q;
         // 字典序最大最小，使用 priority_queue
-        for (int i = 0; i < n; i++) {
+        // for (int i = 0; i < n; i++) {
+        for (int i = 1; i <= n; i++) {
             if (in[i] == 0) {
                 q.push(i);
             }
         }
-        string ret; // 排序序列
+        // string ret_string; // 字符串排序序列
+        ret_vector.clear(); // 数字排序序列
         bool hasor = false; // 唯一性
         while (!q.empty()) {
             if (q.size() >= 2) {
@@ -75,7 +77,8 @@ struct TOPOSort {
             }
             int tp = q.front();
             q.pop();
-            ret.push_back(tp + 'A'); // 排序序列
+            // ret_string.push_back(tp + 'A'); // 排序序列
+            ret_vector.push_back(tp); // 排序序列
             for (int ch : G[tp]) {
                 in[ch]--;
                 if (in[ch] == 0) {
@@ -83,15 +86,24 @@ struct TOPOSort {
                 }
             }
         }
-        for (int i = 0; i < n; i++) {
+        // for (int i = 0; i < n; i++) {
+        for (int i = 1; i <= n; i++) {
             if (in[i] > 0) {
-                return "circle"; // 自环
+                // return "circle"; // 自环
+                return 0; // 自环
             }
         }
         if (hasor) {
-            return "or"; // 唯一性
+            // return "or"; // 不唯一
+            return 2; // 不唯一
         }
-        return ret; // 排序序列
+        // return ret_string; // 排序序列
+        return 1; // 排序序列
+    }
+
+    int TopoSort(vector<int>& in, vector<vector<int> >& G, int n) {
+        vector<int> ret_vector;
+        return TopoSort(in, G, n, ret_vector);
     }
 };
 
