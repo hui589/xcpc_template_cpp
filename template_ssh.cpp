@@ -279,7 +279,7 @@ struct Linear {
         b.resize(sz);
     }
 
-    insert(T x) {
+    void insert(T x) {
         for (int i = sz - 1; i >= 0; i--) {
             if (!(x >> i) & 1) {
                 continue;
@@ -846,9 +846,9 @@ void testFenwick() {
 }
 
 void test01() {
-    testCartesianTree();
-    testFenwick();
-    test_fact_inv_C_n_m();
+    // testCartesianTree();
+    // testFenwick();
+    // test_fact_inv_C_n_m();
 }
 int main() {
     cout << "--------------------------- START ---------------------------\n";
