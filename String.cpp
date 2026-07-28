@@ -2,6 +2,63 @@
 using i64 = long long;
 using namespace std;
 
+struct AC_auto_m {
+    static const int N = 1e5;
+    int son[N][26];
+    int pass[N];
+    int ed[N];
+    int fail[N];
+    int idx;
+    void insert(const string& s) {
+        int cur = 0;
+        for (int i = 0; i < s.size(); i++) {
+            int c = s[i] - 'a';
+            if (son[cur][c] == 0) {
+                son[cur][c] = ++idx;
+            }
+            cur = son[cur][c];
+            pass[cur]++;
+        }
+        ed[cur]++;
+    }
+
+    void build_fail() {
+        queue<int> q;
+        for (int i = 0; i < 26; i++) {
+            if (son[0][i] != 0) {
+                fail[son[0][i]] = 0;
+                q.push(son[0][i]);
+            }
+        }
+        while (!q.empty()) {
+            int u = q.front();
+            q.pop();
+            for (int i = 0; i < 26; i++) {
+                if (son[u][i] != 0) {
+                    fail[son[u][i]] = son[fail[u]][i];
+                    q.push(son[u][i]);
+                }
+                else {
+                    // fail[son[u][i]] = son[fail[u]][i];
+                    son[u][i] = son[fail[u]][i];
+                }
+            }
+        }
+    }
+
+    int query(const string& s) {
+        int ans = 0, cur = 0;
+        for (int i = 0; i < s.size(); i++) {
+            cur = son[cur][s[i] - 'a'];
+            for (int j = cur; j && ed[j] != -1; j = fail[j]) {
+                ans += ed[j];
+                ed[j] = -1;
+            }
+        }
+        return ans;
+    }
+};
+
 struct Tire {
     static const int N = 1e5;
     int son[N][11];
