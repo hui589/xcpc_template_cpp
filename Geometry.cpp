@@ -27,12 +27,12 @@ struct Point {
     friend ostream &operator<<(ostream &os, const Point &a) { os << "(" << a.x << ", " << a.y << ", " << a.z << ")"; return os; }
 };
 
-struct Andrew_ {
+struct Andrew {
     double cross(Point p1, Point p2) {
         return p1.x * p2.y - p1.y * p2.x;
     }
     
-    vector<Point> Andrew (vector<Point>& p) {
+    vector<Point> andrew (vector<Point>& p) {
         sort(p.begin(), p.end());
         vector<Point> v, c;
         for (int i = 0; i < p.size(); i++) {
@@ -63,7 +63,7 @@ void test01() {
 }
 
 int main() {
-    cout << "--------------------------- Si64ARi64 ---------------------------\n";
+    cout << "--------------------------- START ---------------------------\n";
     test01();
     cout << "---------------------------- END ----------------------------\n";
     return 0;
