@@ -135,50 +135,6 @@ struct Tarjan_SCC {
     }
 };
 
-// 矩阵计算，矩阵快速幂
-// 草稿
-struct matrix {
-    int n;
-    int mod = 998244353;
-	vector<vector<i64>> m;
-	matrix(int n1) {
-		n = n1;
-		m.resize(n, vector<i64>(n));
-	}
-	
-    void getE() {
-        for (int i = 0; i < n; i++) {
-            m[i][i] = 1;
-        }
-    }
-
-	matrix operator*(const matrix& mat) {
-		matrix ret(n);
-		for (int i = 0; i < n; i++) {
-			for (int j = 0; j < n; j++) {
-				for (int k = 0; k < n; k++) {
-					ret.m[i][j] = (ret.m[i][j] + m[i][k] * mat.m[k][j]) % mod;
-				}
-			}
-		}
-		return ret;
-	}
-
-    matrix powD(const matrix& ma, int n) {
-        matrix m = ma;
-        matrix ret(m.n);
-        ret.getE();
-        while (n) {
-            if (n & 1) {
-                ret = ret * m;
-            }
-            m = m * m;
-            n >>= 1;
-        }
-        return ret;
-    }
-};
-
 
 // 最小生成树
 

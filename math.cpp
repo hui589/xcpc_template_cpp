@@ -4,6 +4,82 @@ using namespace std;
 // 伽马常数
 const double gama = 0.57721566490153286;
 
+
+// 矩阵计算，矩阵快速幂
+struct matrix {
+    int n;
+    int mod = 998244353;
+	vector<vector<i64>> m;
+	matrix(int n1) {
+		n = n1;
+		m.resize(n, vector<i64>(n));
+	}
+	
+    void getE() {
+        for (int i = 0; i < n; i++) {
+            m[i][i] = 1;
+        }
+    }
+
+	matrix operator*(const matrix& mat) {
+		matrix ret(n);
+		for (int i = 0; i < n; i++) {
+			for (int j = 0; j < n; j++) {
+				for (int k = 0; k < n; k++) {
+					ret.m[i][j] = (ret.m[i][j] + m[i][k] * mat.m[k][j]) % mod;
+				}
+			}
+		}
+		return ret;
+	}
+
+    matrix powD(const matrix& ma, int n) {
+        matrix m = ma;
+        matrix ret(m.n);
+        ret.getE();
+        while (n) {
+            if (n & 1) {
+                ret = ret * m;
+            }
+            m = m * m;
+            n >>= 1;
+        }
+        return ret;
+    }
+};
+struct Matrix {
+    vector<vector<i64> > v;
+    Matrix mat_mul_mod(Matrix& m, i64 mod) {
+        Matrix res;
+        vector<vector<i64> >& ret = res.v;
+        ret.resize(v.size(), vector<i64>(m.v[0].size()));
+        for (int i = 0; i < ret.size(); i++) {
+            for (int j = 0; j < ret[i].size(); j++) {
+                ret[i][j] = 0;
+                for (int k = 0; k < v[i].size(); k++) {
+                    ret[i][j] = (ret[i][j] + v[i][k] * m.v[k][j]) % mod;
+                }
+            }
+        }
+        return res;
+    }
+    Matrix quick_pow_mod(Matrix a, i64 x, i64 mod) {
+        Matrix ret;
+        ret.v.resize(3, vector<i64>(3, 0));
+        ret.v[0][0] = ret.v[1][1] = ret.v[2][2] = 1;
+        while (x) {
+            // cout << "x = " << x << "\n";
+            if (x & 1) {
+                ret = ret.mat_mul_mod(a, mod);
+            }
+            a = a.mat_mul_mod(a, mod);
+            x >>= 1;
+        }
+        return ret;
+    }
+};
+
+
 // 莫比乌斯反演
 struct mubiwusi {
     int tot;
