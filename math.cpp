@@ -17,6 +17,19 @@ struct Exgcd {
         i64 now_y = t.x - (a / b) * t.y;
         return {t.gcd, now_x, now_y};
     }
+
+    i64 exgcd2(i64 a, i64 b, i64& x, i64& y) {
+        if (b == 0) {
+            x = 1;
+            y = 0;
+            return a;
+        }
+        i64 g = exgcd2(b, a % b, x, y);
+        i64 t = x;
+        x = y;
+        y = t - a / b * y;
+        return g;
+    }
 };
 
 
