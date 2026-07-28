@@ -4,6 +4,42 @@ using namespace std;
 // 伽马常数
 const double gama = 0.57721566490153286;
 
+// 莫比乌斯反演
+struct mubiwusi {
+    int tot;
+    bool not_prime[666];
+    int mu[666];
+    int phi[666];
+    int p[666];
+    void getmu(int maxx) {
+        tot = 0;
+        memset(not_prime, false, sizeof(not_prime));
+        mu[1] = 1;
+        phi[1] = 1;
+        for (int i = 2; i <= maxx; i++) {
+            if (!not_prime[i]) {
+                p[tot++] = i;
+                mu[i] = -1;
+                phi[i] = i - 1;
+            }
+            for (int j = 0; j < tot; j++) {
+                if (i * p[j] > maxx) {
+                    break;
+                }
+                not_prime[i * p[j]] = true;
+                if (i % p[j] == 0) {
+                    mu[i * p[j]] = 0;
+                    phi[i * p[j]] = phi[i] * p[j];
+                    break;
+                }
+                mu[i * p[j]] = -mu[i];
+                phi[i * p[j]] = phi[i] * phi[p[j]];
+                // mu[i * p[j]] = mu[i] * mu[p[j]];
+            }
+        }
+    }
+};
+
 // 欧拉函数
 struct Euler_Func {
     i64 phi_function(i64 x) {
