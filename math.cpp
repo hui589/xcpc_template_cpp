@@ -1,9 +1,107 @@
 #include <bits/stdc++.h>
 using i64 = long long;
 using namespace std;
-
 // 伽马常数
 const double gama = 0.57721566490153286;
+
+struct Bignum {
+    static const int LEN = 207;
+    void clear(int a[]) {
+        for (int i = 0; i < LEN; i++) {
+            a[i] = 0;
+        }
+    }
+
+    bool read(int a[]) {
+        bool is_zero;
+        clear(a);
+        string s;
+        cin >> s;
+        if (s == "0") {
+            is_zero = true;
+        }
+        else {
+            is_zero = false;
+        }
+
+        int len = s.size();
+        for (int i = 0; i < len; i++) {
+            a[len - i - 1] = s[i] - '0';
+        }
+        return is_zero;
+    }
+
+    void prt(int a[]) {
+        int i;
+        for (i = LEN - 1; i >= 1; i--) {
+            if (a[i] != 0) {
+                break;
+            }
+        }
+        for (; i >= 0; i--) {
+            cout << a[i];
+        }
+    }
+
+    void add(int a[], int b[], int res[]) {
+        clear(res);
+        for (int i = 0; i < LEN - 1; i++) {
+            res[i] += a[i] + b[i];
+            if (res[i] >= 10) {
+                res[i + 1] += 1;
+                res[i] -= 10;
+            }
+        }
+    }
+
+    void sub(int a[], int b[], int res[]) {
+        clear(res);
+        for (int i = 0; i < LEN - 1; i++) {
+            res[i] += a[i] - b[i];
+            if (res[i] < 0) {
+                res[i + 1] -= 1;
+                res[i] += 10;
+            }
+        }
+    }
+
+    void mul_short(int a[], int b, int res[]) {
+        clear(res);
+        for (int i = 0; i < LEN - 1; i++) {
+            res[i] += a[i] * b;
+            if (res[i] >= 10) {
+                res[i + 1] += res[i] / 10;
+                res[i] %= 10;
+            }
+        }
+    }
+
+    void mul(int a[], int b[], int res[]) {
+        clear(res);
+        for (int i = 0; i < LEN - 1; i++) {
+            for (int j = 0; j <= i; j++) {
+                res[i] += a[j] * b[i - j];
+            }
+            if (res[i] >= 10) {
+                res[i + 1] += res[i] / 10;
+                res[i] %= 10;
+            }
+        }
+    }
+    int mod(int a[], int b) {
+        int res = 0;
+        int i;
+        for (i = LEN - 1; i >= 1; i--) {
+            if (a[i] != 0) {
+                break;
+            }
+        }
+        for (; i >= 0; i--) {
+            res = (res * 10 + a[i]) % b;
+        }
+        return res;
+    }
+};
 
 // 欧拉筛 O(n), 素数最大值 <= n
 struct Euler_Prime {
