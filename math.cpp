@@ -4,6 +4,50 @@ using namespace std;
 // 伽马常数
 const double gama = 0.57721566490153286;
 
+// 欧拉函数
+struct Euler_Func {
+    i64 phi_function(i64 x) {
+        i64 ret = x;
+        for (int i = 2; i * i <= x; i++) {
+            if (x % i == 0) {
+                ret = ret / i * (i - 1);
+            }
+            while (x % i == 0) {
+                x /= i;
+            }
+        }
+        if (x > 1) {
+            ret = ret / x * (x - 1);
+        }
+        return ret;
+    }
+
+    static const int N = 1e5;
+    bool not_prime[N];
+    i64 phi[N];
+    void euler_prime(int maxx) {
+        vector<int> pi;
+        for (int i = 2; i <= maxx; i++) {
+            if (!not_prime[i]) {
+                pi.push_back(i);
+                phi[i] = i - 1;
+            }
+            for (int j = 0; j < pi.size(); j++) {
+                i64 pri_j = pi[j];
+                if (pri_j * i > maxx) {
+                    break;
+                }
+                not_prime[pri_j * i] = true;
+                if (i % pri_j == 0) {
+                    phi[i * pri_j] = phi[i] * pri_j;
+                    break;
+                }
+                phi[i * pri_j] = phi[i] * phi[pri_j];
+            }
+        }
+    }
+};
+
 // 扩展欧几里德
 struct Exgcd {
     i64 gcd, x, y;
