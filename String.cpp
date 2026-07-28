@@ -2,6 +2,57 @@
 using i64 = long long;
 using namespace std;
 
+struct Tire {
+    static const int N = 1e5;
+    int son[N][11];
+    int end[N];
+    int pass[N];
+    int idx = 0;
+    void clear() {
+        memset(son, 0, sizeof(son));
+        memset(end, 0, sizeof(end));
+        memset(pass, 0, sizeof(pass));
+        idx = 0;
+    }
+    bool insert(const string& s) {
+        int cur = 0;
+        int len = s.size();
+        for (int i = 0; i < len; i++) {
+            int c = s[i] - '0';
+            if (!son[cur][c]) {
+                idx++;
+                son[cur][c] = idx;
+            }
+            else {
+            }
+            cur = son[cur][c];
+            if (i == len - 1) {
+                if (pass[cur]) {
+                    return false;
+                }
+            }
+            pass[cur]++;
+            if (end[cur]) {
+                return false;
+            }
+        }
+        end[cur]++;
+        return true;
+    }
+
+    // void insert(const string& s) {
+    //     int cur = 0;
+    //     for (int i = 0; i < s.size(); i++) {
+    //         int c = s[i] - 'a';
+    //         if (!son[cur][c]) {
+    //             son[cur][c] = ++idx;
+    //         }
+    //         cur = son[cur][c];
+    //         pass[cur]++;
+    //     }
+    // }
+};
+
 struct Z_fun {
     vector<int> Z_function(const string& s) {
         int n = s.size();
