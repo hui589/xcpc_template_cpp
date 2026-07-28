@@ -102,3 +102,11 @@ bool Union(int a, int b) {
 
 # 计算几何
 ### 凸包
+Andrew
+
+# 字符串
+### 回文串
+马拉车Manacher
+
+### 字符串匹配
+KMP, Z函数
