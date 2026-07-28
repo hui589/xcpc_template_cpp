@@ -3,6 +3,36 @@ using i64 = long long;
 const i64 LLinf = 0x3333ffff3333ffff;
 using namespace std;
 
+struct simulate {
+    double func(double x, double y) {
+        return x + y;
+    }
+    void SimulateAnneal() {
+        srand(time(0));
+        double T = 3e3;
+        double end_T = 1e-15;
+        double d_T = 0.996;
+        double ans_x = 0;
+        double ans_y = 0;
+        double f = func(ans_x, ans_y);
+        while (T > end_T) {
+            double nx = ans_x + T * (2 * rand() - RAND_MAX);
+            double ny = ans_y + T * (2 * rand() - RAND_MAX);
+            double df = func(nx, ny);
+            if (df <= f) {
+                ans_x = nx;
+                ans_y = ny;
+                f = df;
+            }
+            else if (exp((f - df) / T) * RAND_MAX > rand()) {
+                ans_x = nx;
+                ans_y = ny;
+            }
+            T *= d_T;
+        }
+    }
+};
+
 // SCC强连通分量 Tarjan 
 // 1 起始点
 struct Tarjan_SCC {
