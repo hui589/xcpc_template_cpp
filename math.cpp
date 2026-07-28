@@ -2,6 +2,9 @@
 using i64 = long long;
 using namespace std;
 
+// 伽马常数
+const double gama = 0.57721566490153286;
+
 // 欧拉筛 O(n), 素数最大值 <= n
 struct Euler_Prime {
     vector<int> p;
