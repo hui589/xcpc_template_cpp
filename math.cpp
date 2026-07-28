@@ -4,6 +4,22 @@ using namespace std;
 // 伽马常数
 const double gama = 0.57721566490153286;
 
+// 扩展欧几里德
+struct Exgcd {
+    i64 gcd, x, y;
+
+    Exgcd exgcd(i64 a, i64 b) {
+        if (b == 0) {
+            return {a, 1, 0};
+        }
+        Exgcd t = exgcd(b, a % b);
+        i64 now_x = t.y;
+        i64 now_y = t.x - (a / b) * t.y;
+        return {t.gcd, now_x, now_y};
+    }
+};
+
+
 // 高精度
 struct Bignum {
     static const int LEN = 207;
