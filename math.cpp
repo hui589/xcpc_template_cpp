@@ -4,6 +4,7 @@ using namespace std;
 // 伽马常数
 const double gama = 0.57721566490153286;
 
+// 高精度
 struct Bignum {
     static const int LEN = 207;
     void clear(int a[]) {
