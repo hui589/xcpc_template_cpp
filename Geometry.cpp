@@ -3,7 +3,7 @@ using i64 = long long;
 const i64 LLinf = 0x3333ffff3333ffff;
 using namespace std;
 
-const double eps = 1e-5;
+const double eps = 1e-7;
 
 struct Point {
     double x, y, z;
@@ -25,13 +25,22 @@ struct Point {
     double dot(const Point &a) const { return x * a.x + y * a.y + z * a.z; }
     Point cross(const Point a) const { return Point(y * a.z - z * a.y, z * a.x - x * a.z, x * a.y - y * a.x); }
     friend ostream &operator<<(ostream &os, const Point &a) { os << "(" << a.x << ", " << a.y << ", " << a.z << ")"; return os; }
+    //
+    bool operator < (const Point& p1) const {
+        if (x == p1.x) {
+            if (y == p1.y) {
+                return z < p1.z;
+            }
+            return y < p1.y;
+        }
+        return x < p1.x;
+    }
 };
 
 struct Andrew {
     double cross(Point p1, Point p2) {
         return p1.x * p2.y - p1.y * p2.x;
     }
-    
     vector<Point> andrew (vector<Point>& p) {
         sort(p.begin(), p.end());
         vector<Point> v, c;
@@ -53,10 +62,6 @@ struct Andrew {
         return v;
     }
 };
-
-bool same_line(const Point v1, const Point v2) {
-    return v1.y * v2.x == v1.x * v2.y;
-}
 
 void test01() {
 
