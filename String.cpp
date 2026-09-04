@@ -1,3 +1,8 @@
+// Manacher回文串
+// KMP
+// Z函数
+// 字典树tire
+// AC自动机
 #include <bits/stdc++.h>
 using i64 = long long;
 using namespace std;
