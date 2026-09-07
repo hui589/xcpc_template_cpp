@@ -65,54 +65,44 @@ struct AC_auto_m {
 };
 
 struct Tire {
-    static const int N = 1e5;
-    int son[N][11];
-    int end[N];
-    int pass[N];
-    int idx = 0;
-    void clear() {
-        memset(son, 0, sizeof(son));
-        memset(end, 0, sizeof(end));
-        memset(pass, 0, sizeof(pass));
-        idx = 0;
+    vector<vector<int>> son;
+    vector<int> pass;
+    vector<int> end;
+    int node;
+    char st;
+    Tire (int len, int abcd, char _st) {
+        son.resize(len, vector<int>(abcd));
+        pass.resize(len);
+        end.resize(len);
+        node = 0;
+        st = _st;
     }
-    bool insert(const string& s) {
+    void insert(const string& s) {
         int cur = 0;
         int len = s.size();
         for (int i = 0; i < len; i++) {
-            int c = s[i] - '0';
+            int c = s[i] - st;
             if (!son[cur][c]) {
-                idx++;
-                son[cur][c] = idx;
-            }
-            else {
+                node++;
+                son[cur][c] = node;
             }
             cur = son[cur][c];
-            if (i == len - 1) {
-                if (pass[cur]) {
-                    return false;
-                }
-            }
             pass[cur]++;
-            if (end[cur]) {
-                return false;
-            }
         }
         end[cur]++;
-        return true;
     }
-
-    // void insert(const string& s) {
-    //     int cur = 0;
-    //     for (int i = 0; i < s.size(); i++) {
-    //         int c = s[i] - 'a';
-    //         if (!son[cur][c]) {
-    //             son[cur][c] = ++idx;
-    //         }
-    //         cur = son[cur][c];
-    //         pass[cur]++;
-    //     }
-    // }
+    int find(const string& s) {
+        int cur = 0;
+        int len = s.size();
+        for (int i = 0; i < len; i++) {
+            int c = s[i] - st;
+            if (!son[cur][c]) {
+                return 0;
+            }
+            cur = son[cur][c];
+        }
+        return end[cur];
+    }
 };
 
 struct Z_fun {
