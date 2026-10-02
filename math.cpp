@@ -374,7 +374,7 @@ struct Linear {
 
     void insert(T x) {
         for (int i = sz - 1; i >= 0; i--) {
-            if (!(x >> i) & 1) {
+            if (!((x >> i) & 1)) {
                 continue;
             }
             if (!b[i]) {
