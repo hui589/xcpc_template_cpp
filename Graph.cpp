@@ -5,10 +5,72 @@
 // 拓扑排序
 // 最小生成树
 // SCC强连通分量 Tarjan
+// 割点
 #include <bits/stdc++.h>
 using i64 = long long;
 const i64 LLinf = 0x3333ffff3333ffff;
 using namespace std;
+
+// 割点
+struct Cut_vertex {
+    vector<int> dfn, low, vis, is_cut_vertex;
+    vector<int> cut; // 删去任意点 i ,此连通分量分裂成 cut[i] 个, 只有一个点 cut[i] = 0
+    vector<vector<int>> G;
+    int dfn_cnt, Root, n;
+    vector<int> cut_vertex;
+    Cut_vertex(int _n) {
+        n = _n;
+        dfn.resize(n + 1);
+        low.resize(n + 1);
+        vis.resize(n + 1);
+        cut.resize(n + 1, 1);
+        G.resize(n + 1);
+        is_cut_vertex.resize(n + 1);
+        dfn_cnt = 0;
+    }
+    void tarjan(int node, vector<vector<int>>& G) {
+        vis[node] = 1;
+        dfn[node] = low[node] = ++dfn_cnt;
+        int child_cnt = 0;
+        for (int v : G[node]) {
+            if (!vis[v]) {
+                child_cnt++;
+                tarjan(v, G);
+                low[node] = min(low[node], low[v]);
+                if (node != Root && low[v] >= dfn[node]) {
+                    is_cut_vertex[node] = 1;
+                    cut[node]++;
+                }
+            }
+            else {
+                low[node] = min(low[node], dfn[v]);
+            }
+        }
+        if (node == Root) {
+            if (child_cnt >= 2) {
+                is_cut_vertex[node] = 1;
+                cut[node] = child_cnt;
+            }
+            else if (child_cnt == 0) {
+                cut[node] = 0;
+            }
+        }
+        
+    }
+    void all() {
+        for (int i = 1; i <= n; i++) {
+            if (!vis[i]) {
+                Root = i;
+                tarjan(i, G);
+            }
+        }
+        for (int i = 1; i <= n; i++) {
+            if (is_cut_vertex[i]) {
+                cut_vertex.push_back(i);
+            }
+        }
+    }
+};
 
 // SCC强连通分量 Tarjan 
 // 1 起始点
