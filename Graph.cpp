@@ -6,10 +6,66 @@
 // 最小生成树
 // SCC强连通分量 Tarjan
 // 割点
+// 点双连通分量
 #include <bits/stdc++.h>
 using i64 = long long;
 const i64 LLinf = 0x3333ffff3333ffff;
 using namespace std;
+
+// 点双连通分量
+struct vectex_BCC {
+    vector<int> dfn, low, vis;
+    vector<vector<int>> G;
+    int dfn_cnt, Root, n;
+    vector<vector<int>> bcc;
+    stack<int> stk;
+    vectex_BCC(int _n) {
+        n = _n;
+        dfn.resize(n + 1);
+        low.resize(n + 1);
+        vis.resize(n + 1);
+        G.resize(n + 1);
+        dfn_cnt = 0;
+    }
+    void tarjan(int node, vector<vector<int>>& G) {
+        vis[node] = 1;
+        dfn[node] = low[node] = ++dfn_cnt;
+        stk.push(node);
+        int child_cnt = 0;
+        for (int v : G[node]) {
+            if (!vis[v]) {
+                child_cnt++;
+                tarjan(v, G);
+                low[node] = min(low[node], low[v]);
+                if (low[v] >= dfn[node]) {
+                    int pop;
+                    bcc.push_back(vector<int>());
+                    bcc.back().push_back(node);
+                    do {
+                        pop = stk.top();
+                        stk.pop();             
+                        bcc.back().push_back(pop);
+                    } while (pop != v);
+                }
+            }
+            else {
+                low[node] = min(low[node], dfn[v]);
+            }
+        }
+        if (node == Root && child_cnt == 0) {
+            bcc.push_back(vector<int>());
+            bcc.back().push_back(node);
+        }
+    }
+    void all() {
+        for (int i = 1; i <= n; i++) {
+            if (!vis[i]) {
+                Root = i;
+                tarjan(i, G);
+            }
+        }
+    }
+};
 
 // 割点
 struct Cut_vertex {
