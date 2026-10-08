@@ -8,10 +8,94 @@
 // 割点
 // 点双连通分量
 // 割边
+// 边双连通分量
 #include <bits/stdc++.h>
 using i64 = long long;
 const i64 LLinf = 0x3333ffff3333ffff;
 using namespace std;
+
+// 边双连通分量
+struct Edge_BCC {
+    struct edge {
+        int u, v;
+        int id;
+        bool operator < (const edge& e) const {
+            return id < e.id;
+        }
+    };
+    struct node {
+        int nxt;
+        int id;
+    };
+    vector<int> dfn, low;
+    vector<vector<node>> G;
+    int n, m, dfnidx;
+    vector<edge> cut_edge;
+    vector<bool> vis;
+    //bcc
+    vector<bool> is_bridge;
+    int bcc_cnt;
+    vector<vector<int>> bcc;
+    vector<int> vertex_bcc_id;
+    stack<int> stk;
+    Edge_BCC(int n_, int m_) {
+        n = n_;
+        m = m_;
+        G.resize(n + 1);
+        dfn.resize(n + 1);
+        low.resize(n + 1);
+        vis.resize(n + 1);
+        dfnidx = bcc_cnt = 0;
+        is_bridge.resize(m * 2 + 1);
+        vertex_bcc_id.resize(n + 1);
+    }
+    void tarjan(int u, int in) {
+        vis[u] = true;
+        dfnidx++;
+        dfn[u] = low[u] = dfnidx;
+        for (auto [v, id] : G[u]) {
+            if (!vis[v]) {
+                tarjan(v, id);
+                low[u] = min(low[u], low[v]);
+                if (low[v] > dfn[u]) {
+                    cut_edge.push_back({u, v, id});
+                    is_bridge[id] = is_bridge[id ^ 1] = true;
+                }
+            }
+            else if ((id ^ 1) != in) {
+                low[u] = min(low[u], dfn[v]);
+            }
+        }
+    }
+    void dfs(int u) {
+        bcc.back().push_back(u);
+        vertex_bcc_id[u] = bcc_cnt;
+        for (auto [v, id] : G[u]) {
+            if (vertex_bcc_id[v] || is_bridge[id]) {
+                continue;
+            }
+            dfs(v);
+        }
+    }
+    void all() {
+        for (int i = 1; i <= n; i++) {
+            if (!vis[i]) {
+                tarjan(i, -1);
+            }
+        }
+        for (int i = 1; i <= n; i++) {
+            if (vertex_bcc_id[i] == 0) {
+                bcc_cnt++;
+                bcc.push_back(vector<int>());
+                dfs(i);
+            }
+        }
+    }
+    void add_edge(int u, int v, int id) {
+        G[u].push_back({v, id * 2});
+        G[v].push_back({u, id * 2 + 1});
+    }
+};
 
 // 割边
 // 第 i 条边 id = i*2 与 i*2+1
