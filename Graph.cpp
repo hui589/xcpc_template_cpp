@@ -14,6 +14,7 @@ const i64 LLinf = 0x3333ffff3333ffff;
 using namespace std;
 
 // 割边
+// 第 i 条边 id = i*2 与 i*2+1
 struct Cut_Edge {
     struct edge {
         int u, v;
@@ -40,22 +41,19 @@ struct Cut_Edge {
         low.resize(n + 1);
         vis.resize(n + 1);
     }
-    void tarjan(int u, int fa) {
+    void tarjan(int u, int in) {
         vis[u] = true;
         dfn[u] = low[u] = dfnidx;
         ++dfnidx;
         for (auto [v, id] : G[u]) {
-            if (v == fa) {
-                continue;
-            }
             if (!vis[v]) {
-                tarjan(v, u);
+                tarjan(v, id);
                 low[u] = min(low[u], low[v]);
                 if (low[v] > dfn[u]) {
                     cut_edge.push_back({u, v, id});
                 }
             }
-            else {
+            else if ((id ^ 1) != in) {
                 low[u] = min(low[u], dfn[v]);
             }
         }
