@@ -9,10 +9,64 @@
 // 点双连通分量
 // 割边
 // 边双连通分量
+// 无向图最小环
 #include <bits/stdc++.h>
 using i64 = long long;
 const i64 LLinf = 0x3333ffff3333ffff;
 using namespace std;
+
+// 无向图最小环
+// 注意 3 倍 inf 不要爆上限 inf > n * max(w)
+struct Floyd_min_path {
+    vector<vector<int>> dis, w, update; // 最小距离，原始距离，最小更新点
+    vector<int> mn_path; // 路径
+    int n, mn;
+    int inf;
+    Floyd_min_path(int n_) {
+        n = n_;
+        inf = 5e8;
+        mn = inf;
+        dis.resize(n + 1, vector<int>(n + 1, inf));
+        w.resize(n + 1, vector<int>(n + 1, inf));
+        update.resize(n + 1, vector<int>(n + 1, 0));
+    }
+    void get_path(int u, int v) {
+        if (update[u][v] == 0) {
+            return;
+        }
+        int k = update[u][v];
+        get_path(u, k);
+        mn_path.push_back(k);
+        get_path(k, v);
+    } 
+    void floyd() {
+        dis = w;
+        for (int k = 1; k <= n; k++) {
+            for (int i = 1; i < k; i++) {
+                for (int j = 1; j < i; j++) {
+                    int d = dis[i][j] + w[i][k] + w[k][j];
+                    if (mn > d) {
+                        mn = d;
+                        mn_path.clear();
+                        mn_path.push_back(i);
+                        mn_path.push_back(k);
+                        mn_path.push_back(j);
+                        get_path(j, i);
+                    }
+                }
+            }
+            for (int i = 1; i <= n; i++) {
+                for (int j = 1; j <= n; j++) {
+                    int d = dis[i][k] + dis[k][j];
+                    if (dis[i][j] > d) {
+                        dis[i][j] = d;
+                        update[i][j] = k;
+                    }
+                }
+            }
+        }
+    }
+};
 
 // 边双连通分量
 struct Edge_BCC {
