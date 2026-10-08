@@ -7,10 +7,67 @@
 // SCC强连通分量 Tarjan
 // 割点
 // 点双连通分量
+// 割边
 #include <bits/stdc++.h>
 using i64 = long long;
 const i64 LLinf = 0x3333ffff3333ffff;
 using namespace std;
+
+// 割边
+struct Cut_Edge {
+    struct edge {
+        int u, v;
+        int id;
+        bool operator < (const edge& e) const {
+            return id < e.id;
+        }
+    };
+    struct node {
+        int nxt;
+        int id;
+    };
+    vector<int> dfn, low;
+    vector<vector<node>> G;
+    int n;
+    vector<edge> cut_edge;
+    vector<bool> vis;
+    int dfnidx;
+    Cut_Edge(int n_) {
+        n = n_;
+        dfnidx = 1;
+        G.resize(n + 1);
+        dfn.resize(n + 1);
+        low.resize(n + 1);
+        vis.resize(n + 1);
+    }
+    void tarjan(int u, int fa) {
+        vis[u] = true;
+        dfn[u] = low[u] = dfnidx;
+        ++dfnidx;
+        for (auto [v, id] : G[u]) {
+            if (v == fa) {
+                continue;
+            }
+            if (!vis[v]) {
+                tarjan(v, u);
+                low[u] = min(low[u], low[v]);
+                if (low[v] > dfn[u]) {
+                    cut_edge.push_back({u, v, id});
+                }
+            }
+            else {
+                low[u] = min(low[u], dfn[v]);
+            }
+        }
+    }
+    void all() {
+        for (int i = 1; i <= n; i++) {
+            if (!vis[i]) {
+                tarjan(i, -1);
+            }
+        }
+    }
+};
 
 // 点双连通分量
 struct vectex_BCC {
