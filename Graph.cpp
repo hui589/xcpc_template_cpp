@@ -10,10 +10,75 @@
 // 割边
 // 边双连通分量
 // 无向图最小环
+// 包含特定顶点的最小环
 #include <bits/stdc++.h>
 using i64 = long long;
 const i64 LLinf = 0x3333ffff3333ffff;
 using namespace std;
+
+// 可重边，自环，求包含特定顶点的最小环
+struct Min_Cycle {
+    int bestlen;
+    vector<int> cycle;
+    vector<vector<array<int, 2>>> G;
+    vector<array<int, 2>> e;
+    int n, m;
+    Min_Cycle(int n_, int m_) {
+        n = n_;
+        m = m_;
+        bestlen = 0x3f3f3f3f;
+        G.resize(n + 1);
+        e.resize(m + 1);
+    }
+    bool BFS(int start, int del, int eid) {
+        // 返回存在性
+        vector<int> dis(n + 1, -1);
+        vector<int> pre(n + 1, 0);
+        queue<int> q;
+        q.push(start);
+        while (!q.empty()) {
+            int tp = q.front();
+            q.pop();
+            if (tp == del) {
+                break;
+            }
+            for (auto [v, id] : G[tp]) {
+                if (id == eid) {
+                    continue;
+                }
+                if (dis[v] == -1) {
+                    dis[v] = dis[tp] + 1;
+                    pre[v] = tp;
+                    q.push(v);
+                }
+            }
+        }
+        if (dis[del] == -1) {
+            return false;
+        }
+        int len = dis[del] + 1;
+        if (len < bestlen) {
+            bestlen = len;
+            cycle.clear();
+            for (int u = del; u != start; u = pre[u]) {
+                cycle.push_back(u);
+            }
+            cycle.push_back(start);
+        }
+        return true;
+    }
+    void all(int start) {
+        for (auto [del, eid] : G[start]) {
+            if (e[eid][0] == start && e[eid][1] == start) {
+                cycle.clear();
+                bestlen = 0;
+                cycle.push_back(start);
+                break;
+            }
+            BFS(start, del, eid);
+        }
+    }
+};
 
 // 无向图最小环
 // 注意 3 倍 inf 不要爆上限 inf > n * max(w)
