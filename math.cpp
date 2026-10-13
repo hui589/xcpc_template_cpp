@@ -8,11 +8,134 @@
 // 莫比乌斯反演
 // 欧拉函数
 // 扩展欧几里德
+// 类欧几里得算法
 #include <bits/stdc++.h>
 using i64 = long long;
 using namespace std;
 const double gama = 0.57721566490153286; // 伽马常数
 
+
+// 类欧几里得算法
+// 计算整除式
+struct lei_ou_ji_li_de {
+    i64 f, f2, fi;
+    const int mod = 998244353;
+    const int inv2 = 499122177; // 必须预处理
+    const int inv3 = 332748118; // 必须预处理
+    lei_ou_ji_li_de() {}
+    lei_ou_ji_li_de(i64 x, i64 y, i64 z) {
+        f = x, f2 = y, fi = z;
+    }
+    lei_ou_ji_li_de cul_f_f2_fi(i64 a, i64 b, i64 c, i64 n) {
+        i64 n2 = n * (n + 1) % mod * inv2 % mod;
+        i64 n3 = n2 * (n * 2 + 1) % mod * inv3 % mod;
+        i64 ac = a / c;
+        i64 bc = b / c;
+        lei_ou_ji_li_de tmp, ans;
+        if (a >= c || b >= c) {
+            tmp.cul(a % c, b % c, c, n);
+            // -------------- f
+            ans.f = (tmp.f + n2 * ac % mod + (n + 1) * bc % mod) % mod;
+            // -------------- f2
+            ans.f2 = (tmp.f2 + tmp.fi * ac * 2 % mod + tmp.f * bc * 2 % mod
+            + n3 * ac % mod * ac % mod + (n + 1) * bc % mod * bc % mod
+            + ac * bc % mod * n % mod * (n + 1) % mod) % mod;
+            // -------------- fi
+            ans.fi = (tmp.fi + n3 * ac % mod + n2 * bc % mod) % mod;
+            return ans;
+        }
+        i64 m = (a * n + b) / c;
+        if (m == 0) {
+            return {0, 0, 0};
+        }
+        tmp.cul(c, c - b - 1, a, m - 1);
+        // -------------- f
+        ans.f = m * n % mod - tmp.f;
+        ans.f = ((ans.f % mod) + mod) % mod;
+        // -------------- f2
+        ans.f2 = n * m % mod * (m + 1) % mod - tmp.fi * 2 - tmp.f * 2 - ans.f;
+        ans.f2 = ((ans.f2 % mod) + mod) % mod;
+        // -------------- fi
+        ans.fi = n * (n + 1) % mod * m % mod - tmp.f - tmp.f2;
+        ans.fi = ((ans.fi % mod) + mod) % mod * inv2 % mod;
+        return ans;
+    }
+    void cul(i64 a, i64 b, i64 c, i64 n) {
+        lei_ou_ji_li_de ans = cul_f_f2_fi(a, b, c, n);
+        f = ans.f, f2 = ans.f2, fi = ans.fi;
+    }
+    i64 F(i64 a, i64 b, i64 c, i64 n) {
+        i64 n2 = n * (n + 1) % mod * inv2 % mod;
+        i64 ac = a / c;
+        i64 bc = b / c;
+        i64 ret = 0;
+        if (a >= c || b >= c) {
+            ret = F(a % c, b % c, c, n) 
+            + n2 * ac % mod
+            + (n + 1) * bc % mod;
+            ret %= mod;
+            return ret;
+        }
+        i64 m = (a * n + b) / c;
+        if (m == 0) {
+            return 0;
+        }
+        ret = m * n % mod - F(c, c - b - 1, a, m - 1);
+        ret = ((ret % mod) + mod) % mod;
+        return ret;
+    }
+    i64 F2(i64 a, i64 b, i64 c, i64 n) {
+        i64 n2 = n * (n + 1) % mod * inv2 % mod;
+        i64 n3 = n2 * (n * 2 + 1) % mod * inv3 % mod;
+        i64 ac = a / c;
+        i64 bc = b / c;
+        i64 ret = 0;
+        if (a >= c || b >= c) {
+            ret = F2(a % c, b % c, c, n)
+            + Fi(a % c, b % c, c, n) * ac * 2 % mod
+            + F(a % c, b % c, c, n) * bc * 2 % mod
+            + n3 * ac % mod * ac % mod
+            + (n + 1) * bc % mod * bc % mod
+            + ac * bc % mod * n % mod * (n + 1) % mod;
+            ret %= mod;
+            return ret;
+        }
+        i64 m = (a * n + b) / c;
+        if (m == 0) {
+            return 0;
+        }
+        ret = n * m % mod * (m + 1) % mod
+        - Fi(c, c - b - 1, a, m - 1) * 2
+        - F(c, c - b - 1, a, m - 1) * 2
+        - F(a, b, c, n);
+        ret = ((ret % mod) + mod) % mod;
+        return ret;
+    }
+    i64 Fi(i64 a, i64 b, i64 c, i64 n) {
+        i64 n2 = n * (n + 1) % mod * inv2 % mod;
+        i64 n3 = n2 * (n * 2 + 1) % mod * inv3 % mod;
+        i64 ac = a / c;
+        i64 bc = b / c;
+        i64 ret = 0;
+        if (a >= c || b >= c) {
+            ret = Fi(a % c, b % c, c, n)
+            + n3 * ac % mod
+            + n2 * bc % mod;
+            ret %= mod;
+            return ret;
+        }
+        i64 m = (a * n + b) / c;
+        if (m == 0) {
+            return 0;
+        }
+        ret = n * (n + 1) % mod * m % mod
+        - F(c, c - b - 1, a, m - 1)
+        - F2(c, c - b - 1, a, m - 1);
+        ret = ((ret % mod) + mod) % mod;
+        ret = ret * inv2 % mod;
+        return ret;
+    }
+};
 
 // 欧拉筛 O(n), 素数最大值 <= n
 struct Euler_Prime {
