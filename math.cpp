@@ -15,8 +15,12 @@ using namespace std;
 const double gama = 0.57721566490153286; // 伽马常数
 
 
+
 // 类欧几里得算法
 // 计算整除式
+// 一起计算，f,f2,fi
+// 单独计算
+// 任意整数 除 c != 0 的 f 解决方案，其他同理
 struct lei_ou_ji_li_de {
     i64 f, f2, fi;
     const int mod = 998244353;
@@ -134,6 +138,48 @@ struct lei_ou_ji_li_de {
         ret = ((ret % mod) + mod) % mod;
         ret = ret * inv2 % mod;
         return ret;
+    }
+    i64 FFFF(i64 a, i64 b, i64 c, i64 n) {
+        i64 n2 = n * (n + 1) / 2;
+        i64 ac = a / c;
+        i64 bc = b / c;
+        i64 ret = 0;
+        if (a >= c || b >= c) {
+            ret = FFFF(a % c, b % c, c, n) + n2 * ac + (n + 1) * bc;
+            return ret;
+        }
+        i64 m = (a * n + b) / c;
+        if (m == 0) {
+            return 0;
+        }
+        ret = m * n - FFFF(c, c - b - 1, a, m - 1);
+        return ret;
+    }
+    i64 F_pre(i64 a, i64 b, i64 c, i64 n) {
+        if (c == 0) {
+            return 0;
+        }
+        if (n < 0) {
+            return F_pre(-a, b, c, -n);
+        }
+        if (c > 0) {
+            if (a >= 0) {
+                i64 k = b / c;
+                i64 ans_add = k * (n + 1);
+                b -= k * c;
+                if (b < 0) {
+                    ans_add -= (n + 1);
+                    b += c;
+                }
+                return ans_add + FFFF(a, b, c, n);
+            }
+            else {
+                return -F_pre(-a, c - b - 1, c, n);
+            }
+        }
+        else {
+            return F_pre(-a, -b, -c, n);
+        }
     }
 };
 
