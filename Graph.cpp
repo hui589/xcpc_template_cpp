@@ -11,10 +11,96 @@
 // 边双连通分量
 // 无向图最小环
 // 包含特定顶点的最小环
+// 无向图包含特定点 v 最近环
 #include <bits/stdc++.h>
 using i64 = long long;
 const i64 LLinf = 0x3333ffff3333ffff;
 using namespace std;
+
+// 无向图包含特定点 v 最近环
+struct zuijin_cycle {
+    int n, m;
+    vector<vector<array<int, 2>>> G;
+    vector<array<int, 2>> e;
+    zuijin_cycle(int n_, int m_) {
+        n = n_;
+        m = m_;
+        G.resize(n + 1);
+        e.resize(m + 1);
+    }
+    bool cycle(vector<int> v) {
+        int x = v[0];
+        int y = v[1];
+        int exy = -1;
+        /////////////////////////
+        vector<int> pre(n + 1, 0);
+        vector<bool> vis(n + 1, false);
+        vector<bool> vis_e(m + 1, false);
+        queue<int> q;
+        q.push(x);
+        q.push(y);
+        vis[x] = vis[y] =1;
+        vis_e[exy] = true;
+        int back_u = -1;
+        int back_v = -1;
+        while (!q.empty()) {
+            int u = q.front();
+            q.pop();
+            for (auto [v, eid] : G[u]) {
+                if (vis_e[eid]) {
+                    continue;
+                }
+                vis_e[eid] = true;
+                if (vis[v]) {
+                    back_u = u;
+                    back_v = v;
+                    goto FLAG;
+                }
+                else {
+                    vis[v] = true;
+                    pre[v] = u;
+                    q.push(v);
+                }
+            }
+        }
+        FLAG:;
+        if (back_u == -1) {
+            return false;
+        }
+        vector<int> path_1, path_2;
+        auto f = [&](int u, vector<int>& path) -> void {
+            while (pre[u] != 0) {
+                path.push_back(u);
+                u = pre[u];
+            }
+            path.push_back(u);
+        };
+        f(back_u, path_1);
+        f(back_v, path_2);
+        // cout << "path_1 : | "; for (int u : path_1) cout << u << ' '; cout << '\n';
+        // cout << "path_2 : | "; for (int u : path_2) cout << u << ' '; cout << '\n';
+        int last_pop = -1;
+        vector<int> same;
+        while (!path_1.empty() && !path_2.empty()) {
+            if (path_1.back() == path_2.back()) {
+                last_pop = path_1.back();
+                same.push_back(last_pop);
+                path_1.pop_back();
+                path_2.pop_back();
+            }
+            else {
+                break;
+            }
+        }
+        if (last_pop != -1) {
+            path_1.push_back(last_pop);
+        }
+        while (!path_2.empty()) {
+            path_1.push_back(path_2.back());
+            path_2.pop_back();
+        }
+    }
+};
 
 // 可重边，自环，求包含特定顶点的最小环
 struct Min_Cycle {
