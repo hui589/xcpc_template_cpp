@@ -15,32 +15,32 @@ struct SparseTable {
     vector<T> a;
     vector<vector<T>> MAX;
     vector<vector<T>> MIN;
-    // vector<vector<T>> GCD;
+    vector<vector<T>> GCD;
 #define qMAX 1
 #define qMIN 2
-// #define qGCD 3
+#define qGCD 3
     SparseTable() {}
     SparseTable(int _n) {
         n = _n;
         int lg = __lg(n);
         a.resize(n + 1);
-        MAX.resize(n + 1, vector<T>(lg + 1));
-        MIN.resize(n + 1, vector<T>(lg + 1));
-        // GCD.resize(n + 1, vector<T>(lg + 1));
+        MAX.resize(lg + 1, vector<T>(n + 1));
+        MIN.resize(lg + 1, vector<T>(n + 1));
+        GCD.resize(lg + 1, vector<T>(n + 1));
     }
 
     void build() {
         int lg = __lg(n);
         for (int i = 1; i <= n; i++) {
-            MAX[i][0] = a[i];
-            MIN[i][0] = a[i];
-            // GCD[i][0] = a[i];
+            MAX[0][i] = a[i];
+            MIN[0][i] = a[i];
+            GCD[0][i] = a[i];
         }
-        for (int j = 1; j <= lg; j++) {
-            for (int i = 1; i <= (n - (1 << j) + 1); i++) {
-                MAX[i][j] = max(MAX[i][j - 1], MAX[i + (1 << (j - 1))][j - 1]);
-                MIN[i][j] = min(MIN[i][j - 1], MIN[i + (1 << (j - 1))][j - 1]);
-                // GCD[i][j] = __gcd(GCD[i][j - 1], GCD[i + (1 << (j - 1))][j - 1]);
+        for (int i = 1; i <= lg; i++) {
+            for (int j = 1; j <= (n - (1 << i) + 1); j++) {
+                MAX[i][j] = max(MAX[i - 1][j], MAX[i - 1][j + (1 << (i - 1))]);
+                MIN[i][j] = min(MIN[i - 1][j], MIN[i - 1][j + (1 << (i - 1))]);
+                GCD[i][j] = __gcd(GCD[i - 1][j], GCD[i - 1][j + (1 << (i - 1))]);
             }
         }
     }
@@ -53,14 +53,14 @@ struct SparseTable {
         }
         int lg = __lg(r - l + 1);
         if (q == qMAX) {
-            return max(MAX[l][lg], MAX[r - (1 << lg) + 1][lg]);
+            return max(MAX[lg][l], MAX[lg][r - (1 << lg) + 1]);
         }
         else if (q == qMIN) {
-            return min(MIN[l][lg], MIN[r - (1 << lg) + 1][lg]);
+            return min(MIN[lg][l], MIN[lg][r - (1 << lg) + 1]);
         }
-        // else if (q == qGCD) {
-        //     return __gcd(GCD[l][lg], GCD[r - (1 << lg) + 1][lg]);
-        // }
+        else if (q == qGCD) {
+            return __gcd(GCD[lg][l], GCD[lg][r - (1 << lg) + 1]);
+        }
         return 0;
     }
 };
