@@ -32,7 +32,6 @@ struct zuijin_cycle {
         int x = v[0];
         int y = v[1];
         int exy = -1;
-        /////////////////////////
         vector<int> pre(n + 1, 0);
         vector<bool> vis(n + 1, false);
         vector<bool> vis_e(m + 1, false);
@@ -77,8 +76,6 @@ struct zuijin_cycle {
         };
         f(back_u, path_1);
         f(back_v, path_2);
-        // cout << "path_1 : | "; for (int u : path_1) cout << u << ' '; cout << '\n';
-        // cout << "path_2 : | "; for (int u : path_2) cout << u << ' '; cout << '\n';
         int last_pop = -1;
         vector<int> same;
         while (!path_1.empty() && !path_2.empty()) {
@@ -482,9 +479,7 @@ struct Tarjan_SCC {
     vector<int> low;
     vector<int> scc_id;
     vector<vector<int>> G;
-
     vector<int> sum;
-
     Tarjan_SCC(int n_) {
         n = n_;
         dfn_cnt = 0;
@@ -494,10 +489,8 @@ struct Tarjan_SCC {
         low.resize(n + 1, -1);
         scc_id.resize(n + 1, -1);
         G.resize(n + 1, vector<int>());
-
         sum.resize(n + 1, -1);
     }
-
     void targan(int u) {
         dfn[u] = low[u] = ++dfn_cnt;
         stk.push(u);
@@ -525,7 +518,6 @@ struct Tarjan_SCC {
             } while (v != u);
         }
     }
-
     void all() {
         for (int i = 1; i <= n; i++) {
             if (scc_id[i] == -1) {
@@ -533,7 +525,6 @@ struct Tarjan_SCC {
             }
         }
     }
-
     vector<vector<int>> get_deg() {
         vector<vector<int>> ret(scc_cnt + 1);
         for (int i = 1; i <= n; i++) {
@@ -546,7 +537,6 @@ struct Tarjan_SCC {
         for (int i = 1; i <= scc_cnt; i++) quchong(ret[i]);
         return ret;
     }
-    
     vector<vector<int>> get_scc() {
         vector<vector<int>> ret(scc_cnt + 1);
         for (int i = 1; i <= n; i++) {
@@ -554,7 +544,6 @@ struct Tarjan_SCC {
         }
         return ret;
     }
-
     void quchong(vector<int>& v) {
         if (v.empty()) {
             return;
@@ -576,21 +565,33 @@ struct Tarjan_SCC {
 
 // 最小生成树
 // Kruskal算法，对边长排序，使用并查集合并，修改成下方的形式
-// bool Union(int a, int b) {
-//     a = find(a); b = find(b);
-//     if (a == b) return false;
-//     else {
-//         if (sz[a] < sz[b]) {
-//             fa[a] = b;
-//             sz[b] += sz[a];
-//         }
-//         else {
-//             fa[b] = a;
-//             sz[a] += sz[b];
-//         }
-//         return true;
-//     }
-// }
+struct Kruskal {
+    struct edge {
+        int u, v, w;
+        bool operator < (const edge& e1) const {
+            return w < e1.w;
+        }
+    };
+    vector<int> fa, sz;
+    int find(int x) {
+        return x == fa[x] ? x : fa[x] = find(fa[x]);
+    }
+    bool Union(int a, int b) {
+        a = find(a); b = find(b);
+        if (a == b) return false;
+        else {
+            if (sz[a] < sz[b]) {
+                fa[a] = b;
+                sz[b] += sz[a];
+            }
+            else {
+                fa[b] = a;
+                sz[a] += sz[b];
+            }
+            return true;
+        }
+    }
+};
 
 // 拓扑排序
 // 唯一性，自环，排序序列
@@ -604,7 +605,6 @@ struct TOPOSort {
     int TopoSort(vector<int>& in, vector<vector<int> >& G, int n, vector<int>& ret_vector) {
         queue<int> q;
         // 字典序最大最小，使用 priority_queue
-        // for (int i = 0; i < n; i++) {
         for (int i = 1; i <= n; i++) {
             if (in[i] == 0) {
                 q.push(i);
@@ -628,7 +628,6 @@ struct TOPOSort {
                 }
             }
         }
-        // for (int i = 0; i < n; i++) {
         for (int i = 1; i <= n; i++) {
             if (in[i] > 0) {
                 // return "circle"; // 自环
@@ -642,7 +641,6 @@ struct TOPOSort {
         // return ret_string; // 排序序列
         return 1; // 排序序列
     }
-
     int TopoSort(vector<int>& in, vector<vector<int> >& G, int n) {
         vector<int> ret_vector;
         return TopoSort(in, G, n, ret_vector);
@@ -702,7 +700,6 @@ bool Bellman_Ford(int n, int st, vector<vector<node>>& G) {
     bool flag;
     for (int cnt = 1; cnt <= n; cnt++) {
         flag = false;
-        // 
         for (int i = 0; i <= n; i++) {
             if (dis[i] == LLinf) {
                 continue;
@@ -720,7 +717,6 @@ bool Bellman_Ford(int n, int st, vector<vector<node>>& G) {
     }
     return flag;
 }
-
 };
 
 // 最短路O(mlogm), 1-n 索引
@@ -733,7 +729,6 @@ struct node {
         return d > n1.d;
     }
 };
-
 vector<i64> dijkstra(vector<vector<node>>& G, int st) {
     int n = G.size();
     vector<i64> dis(n, LLinf);
@@ -787,7 +782,6 @@ void dfs(int node, int fa, vector<vector<int>>& G) {
         }
     }
 }
-
 int LCA(int u, int v) {
     if (dep[u] < dep[v]) {
         swap(u, v);

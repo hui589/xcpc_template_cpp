@@ -28,7 +28,6 @@ struct SparseTable {
         MIN.resize(lg + 1, vector<T>(n + 1));
         GCD.resize(lg + 1, vector<T>(n + 1));
     }
-
     void build() {
         int lg = __lg(n);
         for (int i = 1; i <= n; i++) {
@@ -44,7 +43,6 @@ struct SparseTable {
             }
         }
     }
-
     T query(int l, int r, int q) {
         if (l > r) {
             return 0; // MAX, GCD
@@ -66,8 +64,6 @@ struct SparseTable {
 };
 
 // 线段树
-// 简化参数成员函数为 1_base 起始下标
-// 可手动变为 0_base 起始下标
 template <typename T>
 struct SegmentTree {
     #define lc (node << 1)
@@ -75,30 +71,23 @@ struct SegmentTree {
     #define mid ((l + r) >> 1)
     int n_;
     vector<T> a;
-    // vector<T> MAX;
+    vector<T> MAX;
     vector<T> SUM;
-    // vector<T> GCD;
+    vector<T> GCD;
     vector<T> lazy;
-
     SegmentTree() {}
     SegmentTree(int __n__) {
         n_ = __n__;
         a.resize(n_ + 1);
-        // MAX.resize(n_ * 4 + 1);
+        MAX.resize(n_ * 4 + 1);
         SUM.resize(n_ * 4 + 1);
-        // GCD.resize(n_ * 4 + 1);
+        GCD.resize(n_ * 4 + 1);
         lazy.resize(n_ * 4 + 1);
     }
-
-    void build() { build(1, 1, n_); }
-    void update(int idx, T val) { update(1, 1, n_, idx, val); }
-    void update_range(int ul, int ur, T val) { update_range(1, 1, n_, ul, ur, val); }
-    T query(int ql, int qr) { return query(1, 1, n_, ql, qr); }
-
     void pushup(int node) {
-        // MAX[node] = max(MAX[lc], MAX[rc]);
+        MAX[node] = max(MAX[lc], MAX[rc]);
         SUM[node] = SUM[lc] + SUM[rc];
-        // GCD[node] = __gcd(GCD[lc], GCD[rc]);
+        GCD[node] = __gcd(GCD[lc], GCD[rc]);
     }
     void pushdown(int node, int l, int r) {
         if (l == r) {
@@ -114,9 +103,9 @@ struct SegmentTree {
     }
     void build(int node, int l, int r) {
         if (l == r) {
-            // MAX[node] = a[l];
+            MAX[node] = a[l];
             SUM[node] = a[l];
-            // GCD[node] = a[l];
+            GCD[node] = a[l];
             return;
         }
         build(lc, l, mid);
@@ -128,9 +117,9 @@ struct SegmentTree {
             return;
         }
         if (l == r && l == idx) {
-            // MAX[node] = val;
+            MAX[node] = val;
             SUM[node] = val;
-            // GCD[node] = val;
+            GCD[node] = val;
             return;
         }
         update(lc, l, mid, idx, val);
@@ -176,13 +165,11 @@ struct DSU {
     DSU(int _n) {
         n = _n;
         fa.resize(n + 1);
-        sz.resize(n + 1);
+        sz.resize(n + 1, 1);
         for (int i = 1; i <= n; i++) {
             fa[i] = i;
-            sz[i] = 1;
         }
     }
-    // int fa[N], sz[N];
     int find(int x) {
         if (x == fa[x]) {
             return x;
@@ -191,7 +178,6 @@ struct DSU {
             return fa[x] = find(fa[x]);
         }
     }
-    
     void Union(int a, int b) {
         a = find(a);
         b = find(b);
@@ -215,14 +201,12 @@ template<typename T>
 struct CartesianTree {
     int n;
     vector<T> l, r, a;
-
     CartesianTree(int siz) {
         n = siz;
         l.resize(n + 1);
         r.resize(n + 1);
         a.resize(n + 1);
     }
-
     void build() {
         stack<int> stk;
         int last;
@@ -267,14 +251,12 @@ struct Fenwick {
         n = n_;
         t.resize(n_ + 1);
     }
-
     void add(int idx, T val) {
         while (idx <= n) {
             t[idx] += val;
             idx += idx & -idx;
         }
     }
-
     T sum(int idx) {
         T ret = 0;
         while (idx >= 1) {
@@ -283,11 +265,9 @@ struct Fenwick {
         }
         return ret;
     }
-
     T RangeSum(int l, int r) {
         return sum(r) - sum(l - 1);
     }
-
     // 查找前缀和 <= k 的最大的下标
     // 查找前缀和 >= k 的最小下标为 select(k - 1) + 1
     int select(const T& k) {
