@@ -15,7 +15,7 @@ int main() {
         system(("./" + random_gener + " > " + in).c_str());
         system(("./" + mycode + " < " + in + " > mycode.out").c_str());
         system(("./" + baoli  + " < " + in + " > baoli.out").c_str());
-        int res = system("cmp -s std.txt baoli.txt");
+        int res = system("cmp -s mycode.out baoli.out");
         if (res == 1) {
             cout << "wrong on " << i << "\n";
             break;
